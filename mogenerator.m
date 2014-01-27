@@ -4,6 +4,7 @@
 //   http://github.com/rentzsch/mogenerator
 
 #import "mogenerator.h"
+#import "MKCNSManagedObjectModelAdditions.h"
 #import "RegexKitLite.h"
 
 static NSString * const kTemplateVar = @"TemplateVar";
@@ -608,6 +609,7 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
     {@"help",               'h',    DDGetoptNoArgument},
     {@"version",            0,      DDGetoptNoArgument},
     {@"template-var",       0,      DDGetoptKeyValueArgument},
+    {@"model-delta",        'D',    DDGetoptRequiredArgument},
     {nil,                   0,      0},
     };
     [optionsParser addOptionsFromTable:optionTable];
@@ -633,6 +635,7 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
            "      --list-source-files       Only list model-related source files\n"
            "      --orphaned                Only list files whose entities no longer exist\n"
            "      --version                 Display version and exit\n"
+           "  -D, --model-delta FILE        Use JSON data in FILE to modify original model\n"
            "  -h, --help                    Display this help and exit\n"
            "\n"
            "Implements generation gap codegen pattern for Core Data.\n"
@@ -903,6 +906,11 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
     int humanFilesGenerated = 0;
     
     if (model) {
+        if (modelDelta) {
+          BOOL success = [model applyModelDelta:modelDelta];
+          assert(success == YES);
+        }
+      
         MiscMergeEngine *machineH = engineWithTemplateDesc([self templateDescNamed:@"machine.h.motemplate"]);
         assert(machineH);
         MiscMergeEngine *machineM = engineWithTemplateDesc([self templateDescNamed:@"machine.m.motemplate"]);

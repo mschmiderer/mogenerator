@@ -41,4 +41,37 @@
  */
 - (NSArray *) entitiesInTopologicalOrderUsingDependencyFilter:(id<MKCNSRelationshipDescriptionDependencyFilter>) dependencyFilter;
 
+/*
+ Apply given model-delta file to the model.
+ Return YES if the delta was applied successfully.
+ 
+ Model-delta file is expected to be JSON containing either a single operation or an array of operations.
+ Operation:
+    "operation": "add entity" (add a new entity to the model) or "extend entity" (add new properties to an existing model entity) (string; required)
+    "name": entity name (string; required)
+    "className": name of custom class for the entity (used for "add entity" only; string; optional)
+    "attributes": array of attribute-entry (optional)
+    "relationships": array of relationship-entry (optional)
+    "subentities": array of entity names (used for "add entity" only; optional)
+ Attribute entry:
+    "name": attribute name (string; required)
+    "type": one of "NSUndefinedAttributeType", "NSInteger16AttributeType", "NSInteger32AttributeType", "NSInteger64AttributeType",
+          "NSDecimalAttributeType", "NSDoubleAttributeType", "NSFloatAttributeType", "NSStringAttributeType", "NSBooleanAttributeType"
+          "NSDateAttributeType", "NSBinaryDataAttributeType", "NSTransformableAttributeType", "NSObjectIDAttributeType"
+          (string; required)
+    "optional": boolean (optional)
+    "indexed": boolean (optional)
+ Relationship entry:
+    "name": relationship name (string; required)
+    "destination": name of destination entity (string; required)
+    "inverse": name of inverse relationship on destination entity (string; optional, with warning if missing)
+    "deleteRule": one of "NSNoActionDeleteRule", "NSNullifyDeleteRule", "NSCascadeDeleteRule", "NSDenyDeleteRule"
+          (string; optional, with warning if missing - default "NSNullifyDeleteRule")
+    "minCount": number (integer); optional
+    "maxCount": number (integer); optional
+    "optional": boolean (optional)
+ */
+- (BOOL)applyModelDelta:(NSString *)modelDeltaPath;
+
+
 @end

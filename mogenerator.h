@@ -75,6 +75,7 @@
     BOOL                  _listSourceFiles;
     BOOL                  _orphaned;
     NSString              *modelDelta;
+    NSString              *modelOutput;
     NSMutableDictionary   *templateVar;
 }
 @end

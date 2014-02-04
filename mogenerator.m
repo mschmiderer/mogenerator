@@ -610,6 +610,7 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
     {@"version",            0,      DDGetoptNoArgument},
     {@"template-var",       0,      DDGetoptKeyValueArgument},
     {@"model-delta",        'D',    DDGetoptRequiredArgument},
+    {@"model-output",       0,      DDGetoptRequiredArgument},
     {nil,                   0,      0},
     };
     [optionsParser addOptionsFromTable:optionTable];
@@ -636,6 +637,7 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
            "      --orphaned                Only list files whose entities no longer exist\n"
            "      --version                 Display version and exit\n"
            "  -D, --model-delta FILE        Use JSON data in FILE to modify original model\n"
+           "      --model-output FILE       Save the (possibly updated) data model to FILE (normally .mom)\n"
            "  -h, --help                    Display this help and exit\n"
            "\n"
            "Implements generation gap codegen pattern for Core Data.\n"
@@ -909,6 +911,11 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
         if (modelDelta) {
           BOOL success = [model applyModelDelta:modelDelta];
           assert(success == YES);
+        }
+      
+        if (modelOutput) {
+          BOOL success = [NSKeyedArchiver archiveRootObject:model toFile:modelOutput];
+          assert(success = YES);
         }
       
         MiscMergeEngine *machineH = engineWithTemplateDesc([self templateDescNamed:@"machine.h.motemplate"]);

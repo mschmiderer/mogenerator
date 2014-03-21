@@ -248,6 +248,18 @@ EXIT:
   }
   [op removeObjectForKey:@"subentities"];
   
+  id subClassName = [op objectForKey: @"managedObjectSubclass"];
+  if (subClassName) {
+    // preserve original classname so we can revert later
+    NSMutableDictionary *newUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:entity.managedObjectClassName, @"originalClassName", nil];
+    if (entity.userInfo) {
+      [newUserInfo addEntriesFromDictionary:entity.userInfo];
+    }
+    [entity setUserInfo:newUserInfo];
+    [entity setManagedObjectClassName: subClassName];
+    [op removeObjectForKey:@"managedObjectSubclass"];
+  }
+  
   if (op.count > 0) {
     NSLog(@"Model-delta operation contains unknown keys:");
     for (NSString *key in op.allKeys) {
@@ -611,5 +623,25 @@ EXIT:
   }
 }
 
+- (void)revertCustomSubclassNames {
+  for (NSEntityDescription *anEntity in self.entities) {
+    NSDictionary *entityUserInfo = anEntity.userInfo;
+    NSString *originalClassName = [anEntity.userInfo objectForKey:@"originalClassName"];
+    if (originalClassName) {
+      anEntity.managedObjectClassName = originalClassName;
+      
+      // clear out user info dictionary
+      if (entityUserInfo.count == 1) {
+        anEntity.userInfo = nil;
+        continue;
+      }
+      
+      // preserve existing userInfo entries
+      NSMutableDictionary *updatedUserInfo = [NSMutableDictionary dictionaryWithDictionary:entityUserInfo];
+      [updatedUserInfo removeObjectForKey:@"originalClassName"];
+      anEntity.userInfo = [[updatedUserInfo copy] autorelease];
+    }
+  }
+}
 
 @end

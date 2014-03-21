@@ -918,6 +918,9 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
           assert(success = YES);
         }
       
+        // HACK: revert custom subclass names
+        [model revertCustomSubclassNames];
+      
         MiscMergeEngine *machineH = engineWithTemplateDesc([self templateDescNamed:@"machine.h.motemplate"]);
         assert(machineH);
         MiscMergeEngine *machineM = engineWithTemplateDesc([self templateDescNamed:@"machine.m.motemplate"]);

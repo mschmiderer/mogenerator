@@ -73,5 +73,6 @@
  */
 - (BOOL)applyModelDelta:(NSString *)modelDeltaPath;
 
+- (void)revertCustomClassNames;
 
 @end

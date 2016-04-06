@@ -364,6 +364,9 @@ EXIT:
     
     BOOL optional = [[dict objectForKey:@"optional"] boolValue];
     [dict removeObjectForKey:@"optional"];
+      
+    id defaultValue = [dict objectForKey:@"default_value"];
+    [dict removeObjectForKey:@"default_value"];
     
     BOOL indexed = [[dict objectForKey:@"indexed"] boolValue];
     [dict removeObjectForKey:@"indexed"];
@@ -381,6 +384,10 @@ EXIT:
     attribute.name = name;
     attribute.optional = optional;
     attribute.indexed = indexed;
+    if(defaultValue){
+      attribute.defaultValue = defaultValue;
+    }
+    
     
     NSMutableArray *entityProperties = [entity.properties mutableCopy];
     [entityProperties addObject:attribute];
